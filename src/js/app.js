@@ -30,7 +30,7 @@ let state = {
 };
 
 // misc. init
-let chunks = [];
+var chunks = [];
 
 let log = str => EL.out.textContent = str;
 
@@ -102,7 +102,6 @@ let success = stream => {
         state.currAction = ACTIONS.leaveMessageListen;
         log(`Here is the voicemail greeting for inbox #${state.currID}`);
         let audio = makeAudio(state.inboxes[state.currID]);
-        audio.autoplay = true;
         EL.recordings.innerHTML = '';
         EL.recordings.appendChild(audio);
         EL.leaveMessage.style.background = 'green';
@@ -133,8 +132,8 @@ let success = stream => {
 
   mediaRecorder.onstop = e => {
     // create audio blob and get URL reference
-    chunks = [];
     let blob = new Blob(chunks, { 'type': 'audio/ogg; codecs=opus' });
+    chunks = [];
     let audioSrc = window.URL.createObjectURL(blob);
 
     switch(state.currAction) {
@@ -155,9 +154,8 @@ let success = stream => {
         console.log(`Something went wrong, action ${state.currAction} shouldn't happen here`);
         break;
     }
-
-    mediaRecorder.ondataavailable = e => chunks.push(e.data);
   }
+  mediaRecorder.ondataavailable = e => chunks.push(e.data);
 };
 
 // setup media devices

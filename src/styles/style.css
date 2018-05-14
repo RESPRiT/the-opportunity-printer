@@ -1,0 +1,8 @@
+.container {
+    background-color: lightgray;
+    padding: 25px;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 50px;
+    max-width: 750px;
+}

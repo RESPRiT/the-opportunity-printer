@@ -1,37 +1,37 @@
-
 <!DOCTYPE html>
 <html lang="en-us">
-  <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width">
-    <title>Opportunity Printer Voicemail System</title>
-  </head>
-  <body>
-    <h1>Opportunity Printer</h1>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width">
+  <title>Opportunity Printer</title>
+</head>
+
+<body>
+  <h1>Opportunity Printer</h1>
+
+  <div class="container voicemail">
+    <h2>Voicemail feature</h2>
     <section class="controls">
       <div class="actions">
-        <button class="make-inbox">
-          Make Inbox
-        </button>
-        <button class="check-inbox">
-          Check Inbox
-        </button>
-        <button class="leave-message">
-          Leave Message
-        </button>
+        <button class="make-inbox">Make Inbox</button>
+        <button class="check-inbox">Inbox</button>
+        <button class="leave-message">Leave Message</button>
         <input type="text" class="numpad">
       </div>
     </section>
-    <section class="output">
-      <div class="out">
-        
-      </div>
-    </section>
-    <section class="recordings">
 
+    <section class="output">
+      <div class="out"></div>
     </section>
-    
-    <script src="js/mediaDevices-getUserMedia-polyfill.js"></script>
-    <script src="js/app.js"></script>
-  </body>
+
+    <section class="recordings"></section>
+  </div>
+  
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  <link rel="stylesheet" type="text/css" href="styles/style.css">
+  <script src="js/mediaDevices-getUserMedia-polyfill.js"></script>
+  <script src="js/app.js"></script>
+</body>
+
 </html>

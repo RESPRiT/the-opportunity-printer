@@ -49,7 +49,7 @@ let success = stream => {
 
   // make inbox
   EL.makeInbox.onclick = () => {
-    switch(mediaRecorder.state) {
+    switch (mediaRecorder.state) {
       case 'inactive':
         state.currAction = ACTIONS.makeInbox;
         state.currID = state.nextID;
@@ -76,11 +76,11 @@ let success = stream => {
     state.currAction = ACTIONS.checkInbox;
     state.currID = EL.id.value;
 
-    if(state.currID in state.messages) {
-      if(state.messages[state.currID].length > 0) {
+    if (state.currID in state.messages) {
+      if (state.messages[state.currID].length > 0) {
         log(`Here are the messages left for inbox #${state.currID}`);
         EL.recordings.innerHTML = '';
-        for(let src of state.messages[state.currID]) {
+        for (let src of state.messages[state.currID]) {
           let audio = makeAudio(src);
           EL.recordings.appendChild(audio);
         }
@@ -96,9 +96,9 @@ let success = stream => {
   EL.leaveMessage.onclick = () => {
     state.currID = EL.id.value;
 
-    if(state.currID in state.messages) {
-      if(state.currAction != ACTIONS.leaveMessageListen &&
-         state.currAction != ACTIONS.leaveMessageRecord) {
+    if (state.currID in state.messages) {
+      if (state.currAction != ACTIONS.leaveMessageListen &&
+        state.currAction != ACTIONS.leaveMessageRecord) {
         state.currAction = ACTIONS.leaveMessageListen;
         log(`Here is the voicemail greeting for inbox #${state.currID}`);
         let audio = makeAudio(state.inboxes[state.currID]);
@@ -108,11 +108,11 @@ let success = stream => {
 
         EL.makeInbox.disabled = true;
         EL.checkInbox.disabled = true;
-      } else if(state.currAction == ACTIONS.leaveMessageListen) {
+      } else if (state.currAction == ACTIONS.leaveMessageListen) {
         state.currAction = ACTIONS.leaveMessageRecord;
         EL.leaveMessage.style.background = 'red';
         mediaRecorder.start();
-        
+
         log(`Recording message for inbox #${state.currID}`);
         EL.recordings.innerHTML = '';
         EL.makeInbox.disabled = true;
@@ -136,7 +136,7 @@ let success = stream => {
     chunks = [];
     let audioSrc = window.URL.createObjectURL(blob);
 
-    switch(state.currAction) {
+    switch (state.currAction) {
       case ACTIONS.makeInbox:
         state.inboxes[state.nextID] = audioSrc;
         state.messages[state.nextID] = [];
@@ -144,7 +144,7 @@ let success = stream => {
         break;
       case ACTIONS.leaveMessageRecord:
         state.currAction = null;
-        if(state.currID in state.messages) {
+        if (state.currID in state.messages) {
           state.messages[state.currID].push(audioSrc);
         } else {
           console.log(`Inbox #${state.currID} does not exist`);
@@ -162,6 +162,6 @@ let success = stream => {
 navigator.mediaDevices.getUserMedia({ audio: true })
   .then(success)
   .catch(err => {
-     console.log(`The following getUserMedia error occured: ${err}`);
+    console.log(`The following getUserMedia error occured: ${err}`);
   }
-);
+  );

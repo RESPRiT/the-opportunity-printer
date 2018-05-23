@@ -8,84 +8,109 @@ const ACTIONS = {
 
 // useful elements
 const EL = {
+  /*
   makeInbox: document.querySelector('.make-inbox'),
   checkInbox: document.querySelector('.check-inbox'),
   leaveMessage: document.querySelector('.leave-message'),
   id: document.querySelector('.numpad'),
   recordings: document.querySelector('.recordings'),
-  out: document.querySelector('.out')
+  */
+  out: document.querySelector('.out'),
+  outAlt: document.querySelector('.out-alt')
 };
 
 // state
 let state = {
   currAction: null,
+
   // mapping of id -> inbox welcome audio URL
   inboxes: {},
+
   // mapping of id -> arr of inbox messages URLs
   messages: {},
+
+  // mapping of seeker project ids -> inbox ids
+  projectIDs: {},
+
   // current ID being accessed/used
   currID: null,
+
   // ID of next inbox to be created
-  nextID: 0
+  nextID: 1
 };
 
 // misc. init
-var chunks = [];
+const beep = new Audio('audio/beep.mp3');
 
+let beepEnded = (callback) => beep.addEventListener('ended', callback);
+
+let chunks = [];
 let log = str => EL.out.textContent = str;
+let logAlt = str => EL.outAlt.textContent = str;
 
 let makeAudio = src => {
+  /*
   let audio = document.createElement('audio');
   audio.setAttribute('controls', '');
   audio.controls = true;
   audio.src = src;
+  */
+  let audio = new Audio(src);
 
   return audio;
 };
+
+let audioFn = {};
 
 // setup media recorder
 let success = stream => {
   let mediaRecorder = new MediaRecorder(stream);
 
-  // make inbox
-  EL.makeInbox.onclick = () => {
+  // make inbox, returns true if the call stopped the recording
+  //EL.makeInbox.onclick = 
+  audioFn.makeInbox = () => {
     switch (mediaRecorder.state) {
       case 'inactive':
         state.currAction = ACTIONS.makeInbox;
         state.currID = state.nextID;
-        EL.makeInbox.style.background = 'red';
-        mediaRecorder.start();
+        //EL.makeInbox.style.background = 'red';
+        beepEnded(() => mediaRecorder.start());
+        beep.play();
 
-        log(`Recording voicemail welcome for inbox #${state.currID}`);
-        EL.leaveMessage.disabled = true;
-        EL.checkInbox.disabled = true;
-        break;
+        //log(`Recording voicemail welcome for inbox #${state.currID}`);
+        //EL.leaveMessage.disabled = true;
+        //EL.checkInbox.disabled = true;
+        return false;
       case 'recording':
-        EL.makeInbox.style.background = '';
+        //EL.makeInbox.style.background = '';
         mediaRecorder.stop();
 
-        log(`Inbox #${state.currID} created!`);
-        EL.leaveMessage.disabled = false;
-        EL.checkInbox.disabled = false;
-        break;
+        //log(`Inbox #${state.currID} created!`);
+        //EL.leaveMessage.disabled = false;
+        //EL.checkInbox.disabled = false;
+        return true;
     }
   };
 
   // check inbox
-  EL.checkInbox.onclick = () => {
+  // EL.checkInbox.onclick = 
+  // TODO: Probably redundant code idk
+  audioFn.checkInbox = (id, messageNum) => {
     state.currAction = ACTIONS.checkInbox;
-    state.currID = EL.id.value;
+    state.currID = id;
+    //state.currID = EL.id.value;
 
     if (state.currID in state.messages) {
       if (state.messages[state.currID].length > 0) {
-        log(`Here are the messages left for inbox #${state.currID}`);
-        EL.recordings.innerHTML = '';
-        for (let src of state.messages[state.currID]) {
-          let audio = makeAudio(src);
-          EL.recordings.appendChild(audio);
-        }
+        //log(`Here are the messages left for inbox #${state.currID}`);
+        //EL.recordings.innerHTML = '';
+        //for (let src of state.messages[state.currID]) {
+          //let audio = makeAudio(src);
+          //EL.recordings.appendChild(audio);
+        //}
+        return makeAudio(state.messages[state.currID][messageNum]);
       } else {
-        log(`Inbox #${state.currID} is empty`);
+       log(`Inbox #${state.currID} is empty`);
       }
     } else {
       log(`Inbox #${state.currID} does not exist`);
@@ -93,37 +118,42 @@ let success = stream => {
   };
 
   // leave message
-  EL.leaveMessage.onclick = () => {
-    state.currID = EL.id.value;
+  //EL.leaveMessage.onclick = 
+  audioFn.leaveMessage = (projectID) => {
+    state.currID = state.projectIDs[projectID];
+    //state.currID = EL.id.value;
 
     if (state.currID in state.messages) {
       if (state.currAction != ACTIONS.leaveMessageListen &&
         state.currAction != ACTIONS.leaveMessageRecord) {
         state.currAction = ACTIONS.leaveMessageListen;
-        log(`Here is the voicemail greeting for inbox #${state.currID}`);
-        let audio = makeAudio(state.inboxes[state.currID]);
-        EL.recordings.innerHTML = '';
-        EL.recordings.appendChild(audio);
-        EL.leaveMessage.style.background = 'green';
+        //log(`Here is the voicemail greeting for inbox #${state.currID}`);
+        return makeAudio(state.inboxes[state.currID]);
+        //EL.recordings.innerHTML = '';
+        //EL.recordings.appendChild(audio);
+        //EL.leaveMessage.style.background = 'green';
 
-        EL.makeInbox.disabled = true;
-        EL.checkInbox.disabled = true;
+        //EL.makeInbox.disabled = true;
+        //EL.checkInbox.disabled = true;
       } else if (state.currAction == ACTIONS.leaveMessageListen) {
         state.currAction = ACTIONS.leaveMessageRecord;
-        EL.leaveMessage.style.background = 'red';
-        mediaRecorder.start();
+        //EL.leaveMessage.style.background = 'red';
+        beepEnded(() => mediaRecorder.start());
+        beep.play();
 
-        log(`Recording message for inbox #${state.currID}`);
-        EL.recordings.innerHTML = '';
-        EL.makeInbox.disabled = true;
-        EL.checkInbox.disabled = true;
+        //log(`Recording message for inbox #${state.currID}`);
+        //EL.recordings.innerHTML = '';
+        //EL.makeInbox.disabled = true;
+        //EL.checkInbox.disabled = true;
+        return false;
       } else {
-        EL.leaveMessage.style.background = '';
+        //EL.leaveMessage.style.background = '';
         mediaRecorder.stop();
 
-        log(`Message left for inbox #${state.currID}`);
-        EL.makeInbox.disabled = false;
-        EL.checkInbox.disabled = false;
+        //log(`Message left for inbox #${state.currID}`);
+        //EL.makeInbox.disabled = false;
+        //EL.checkInbox.disabled = false;
+        return true;
       }
     } else {
       log(`Inbox #${state.currID} does not exist`);

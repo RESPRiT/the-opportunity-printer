@@ -1,11 +1,3 @@
-const STAGES = {
-  intro: 'INTRODUCTION',
-  skillsSeeking: 'SKILLS_SEEKING',
-  skillsEmploying: 'SKILLS_EMPLOYING',
-  interests: 'INTERESTS',
-  personality: 'PERSONALITY',
-};
-
 const ROLES = {
   seeking: '1',
   employing: '2',
@@ -103,30 +95,87 @@ const INTRODUCTION = {
   }
 };
 
+const CHECKING = {
+  makeInbox: {
+    text: 'Press + to record your project description after the beep, press + again to finish recording',
+    input: /\+/,
+    store: false
+  },
+  checkingVoicemail: {
+    text: 'Checking voicemail (Press + to progress through messages)',
+    input: /\+/,
+    store: false
+  },
+  leavingMessageListen: {
+    text: 'Press + to begin playing project description',
+    input: /\+/,
+    store: false
+  },
+  leavingMessageChoice: {
+    text: 'Are you interested in this project? If so, press + to leave a message and phone number, if not, press 0 to return to the main screen',
+    input: /[\+0]/,
+    store: false
+  },
+  leavingMessageRecord: {
+    text: 'Press + to begin recording your message after the beep, press + to finish recording',
+    input: /\+/,
+    store: false
+  },
+  leavingMessagePhone: {
+    text: 'Type in your phone number if you would like to provide contact information and press + when you are done, or press + to finish',
+    input: /[0-9\+]/,
+    store: false
+  },
+  notFound: {
+    text: 'Nothing with that ID was found (Press + to return to the main screen)',
+    input: /\+/,
+    store: false
+  },
+  noMessages: {
+    text: 'No messages have been left for your project yet (Press + to return to the main screen)',
+    input: /\+/,
+    store: false
+  }
+}
+
 const CONCLUSION = {
   seeking: {
     text: 'Please pull the lever to receive your matches!',
-    input: /./,
+    input: /\+/,
     store: false
   },
   employing: {
     text: 'Please pull the lever to receive your ID!',
-    input: /./,
+    input: /\+/,
+    store: false
+  },
+  checking: {
+    text: 'Please pull the lever to receive contact information for those who left you messages!',
+    input: /\+/,
+    store: false
+  },
+  leaveMessage: {
+    text: 'Message and contact info received! (Press + to return to the main screen)',
+    input: /\+/,
     store: false
   }
 };
 
-let state = {
-  role: null,
-  currentStage: INTRODUCTION.role,
-  responses: null
-};
+// reuse state from app.js
+state.role = null;
+state.currentStage = INTRODUCTION.role;
+state.responses = null;
 
-let log = str => document.querySelector('.out').textContent = str;
+// let log = str => document.querySelector('.out').textContent = str;
 
 let handleInput = (keyName) => {
+  // ignore input if audio is playing
+  if(state.currAudio && !state.currAudio.ended) {
+    return;
+  }
+
   // determine if we should do anything
-  if(!keyName.match(state.currentStage.input)) {
+  if(keyName != null && !keyName.match(state.currentStage.input)) {
     console.log(`${keyName} does not match ${state.currentStage.input}`);
     return;
   } else {
@@ -137,6 +186,7 @@ let handleInput = (keyName) => {
   if(state.role == null) {
     state.role = keyName;
     state.responses = {};
+    logAlt('');
     
     // update stage
     switch(state.role) {
@@ -160,8 +210,7 @@ let handleInput = (keyName) => {
         handleEmploying(keyName);
         break;
       case ROLES.checking:
-        // TODO: Implement the voicemail system
-        //handleChecking(keyName);
+        handleChecking(keyName);
         break;
     }
   }
@@ -209,8 +258,38 @@ let handleSeeking = (keyName) => {
     case CONCLUSION.seeking:
       state.currentStage = INTRODUCTION.role;
       state.role = null;
+      
+      // generate random IDs for matches
+      let matches = [];
+      let i = 1;
+      do {
+        matches[i] = Math.floor(Math.random() * 1000) + 1;
+        i++;
+      } while (
+        matches.reduce(
+          (prev, curr) => prev && !Object.keys(state.projectIDs).includes(curr)
+        ) && i <= 4
+      );
+
+      let retMatches = [];
+      for(i = 1; i <= matches.length; i++) {
+        if(state.inboxes[i]) {
+          state.projectIDs[matches[i]] = i;
+          retMatches[i - 1] = matches[i];
+        }
+      }
+
+      console.log(retMatches);
       // TODO: find and print matches
+      if(retMatches.length > 0) {
+        logAlt(`Matches are ${retMatches.join(', ')}`);
+      } else {
+        logAlt('No matches :(');
+      }
       break;
+    default:
+      console.log('Can\'t handle for state');
+      console.log(state.currentStage);
   }
 };
 
@@ -248,14 +327,130 @@ let handleEmploying = (keyName) => {
       state.responses['city'] = keyName;
       break;
     case PERSONALITY_QUESTIONS.animal:
-      state.currentStage = CONCLUSION.employing;
+      state.currentStage = CHECKING.makeInbox;
       state.responses['animal'] = keyName;
+      break;
+    case CHECKING.makeInbox:
+      if(audioFn.makeInbox()) {
+        state.currentStage = CONCLUSION.employing;
+      }
       break;
     case CONCLUSION.employing:
       state.currentStage = INTRODUCTION.role;
       state.role = null;
-      // TODO: print ID
+      // TODO: Print ID
+      console.log(`ID is ${state.currID}`);
+      logAlt(`ID is ${state.currID}`);
       break;
+    default:
+      console.log('Can\'t handle for state');
+      console.log(state.currentStage);
+  }
+};
+
+let handleChecking  = (keyName) => {
+  switch(state.currentStage) {
+    case INTRODUCTION.checking:
+      logAlt('');
+      if(keyName == '+') {
+        if(Object.keys(state.projectIDs).includes(state.responses['id'])) {
+          state.currentStage = CHECKING.leavingMessageListen;
+        } else if(Object.keys(state.messages).includes(state.responses['id'])) {
+          state.currentStage = CHECKING.checkingVoicemail;
+        } else {
+          state.currentStage = CHECKING.notFound;
+        }
+      } else {
+        if(!state.responses['id']) {
+          state.responses['id'] = keyName;
+        } else {
+          state.responses['id'] += keyName;
+        }
+        console.log(state.responses['id']);
+        logAlt(state.responses['id']);
+      }
+      break;
+    case CHECKING.notFound:
+      state.currentStage = INTRODUCTION.role;
+      state.role = null;
+      break;
+    case CHECKING.noMessages:
+      state.currentStage = INTRODUCTION.role;
+      state.role = null;
+      break;
+    case CHECKING.checkingVoicemail:
+      // check if there are any messages
+      let currMessages = state.messages[state.responses['id']];
+      if(currMessages.length == 0) {
+        state.currentStage = CHECKING.noMessages;
+        return;
+      }
+
+      // start incrementing through messages
+      if(state.responses['checked'] == undefined) {
+        state.responses['checked'] = 0;
+      } else {
+        state.responses['checked']++;
+      }
+
+      // play message if there is a next message
+      if(currMessages.length > state.responses['checked']) {
+        state.currAudio = audioFn.checkInbox(state.responses['id'], 
+                                             state.responses['checked']);
+        state.currAudio.play();
+
+      } else {
+        state.currentStage = CONCLUSION.checking;
+      }
+      break;
+    case CONCLUSION.checking:
+      state.currentStage = INTRODUCTION.role;
+      state.role = null;
+      logAlt('Contact info/phone numbers coming soon!!');
+      break;
+    case CHECKING.leavingMessageListen:
+      state.currAudio = audioFn.leaveMessage(state.responses['id']);
+      state.currAudio.addEventListener('ended', () => {
+        state.currentStage = CHECKING.leavingMessageChoice;
+        handleInput(null);
+      });
+      state.currAudio.play();
+      break;
+    case CHECKING.leavingMessageChoice:
+      if(keyName == '+') {
+        state.currentStage = CHECKING.leavingMessageRecord;
+      } else if(keyName == '0') {
+        state.currentStage = INTRODUCTION.role;
+        state.role = null;
+        state.currAction = null;
+      }
+      break;
+    case CHECKING.leavingMessageRecord:
+      if(audioFn.leaveMessage(state.responses['id'])) {
+        state.currentStage = CHECKING.leavingMessagePhone;
+      }
+      break;
+    case CHECKING.leavingMessagePhone:
+      logAlt('');
+      if(keyName == '+') {
+        state.currentStage = CONCLUSION.leaveMessage;
+      } else {
+        if(!state.responses['phone']) {
+          state.responses['phone'] = keyName;
+        } else {
+          state.responses['phone'] += keyName;
+        }
+        console.log(state.responses['phone']);
+        logAlt(state.responses['phone']);
+      }
+      break;
+    case CONCLUSION.leaveMessage:
+      state.currentStage = INTRODUCTION.role;
+      state.role = null;
+      break;
+    default:
+      console.log('Can\'t handle for state');
+      console.log(state.currentStage);
   }
 };
 

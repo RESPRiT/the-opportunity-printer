@@ -1,6 +1,2 @@
-(function() {
-
-    function printId(id) { }
-    function printMatches(matches) { }
-
-})();
+function printId(id) { }
+function printMatches(matches) { }

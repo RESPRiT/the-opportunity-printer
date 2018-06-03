@@ -5,11 +5,6 @@ state.responses = null;
 
 // let log = str => document.querySelector('.out').textContent = str;
 
-function printId(id) {
-  console.log('Printing id #' + id);
-
-}
-
 let handleInput = (keyName) => {
   // ignore input if audio is playing
   if(state.currAudio && !state.currAudio.ended) {
@@ -174,12 +169,10 @@ let handleEmploying = (keyName) => {
       break;
     case CHECKING.makeInbox:
       if(audioFn.makeInbox()) {
-        console.log('Creating inbox...');
         state.currentStage = CONCLUSION.employing;
       }
       break;
     case CONCLUSION.employing:
-      console.log('Conclusion');
       state.currentStage = INTRODUCTION.role;
       state.role = null;
 

@@ -1,7 +1,7 @@
 const ROLES = {
   seeking: '1',
   employing: '2',
-  checking: '#'
+  checking: '+'
 };
 
 const EMPLOYING_QUESTIONS = {
@@ -73,7 +73,7 @@ const PERSONALITY_QUESTIONS = {
 
 const INTRODUCTION = {
   role: {
-    text: 'Welcome to the Collaboration Station, press 1, 2, or type # followed by an ID to check messages or to leave a message',
+    text: 'Welcome to the Collaboration Station, press 1, 2, or type + followed by an ID to check messages or to leave a message',
     // determine exceptable input from ROLES keys
     input: new RegExp(`[${Object.values(ROLES).join('')}]`),
     store: true

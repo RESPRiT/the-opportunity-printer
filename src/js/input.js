@@ -175,8 +175,8 @@ let handleEmploying = (keyName) => {
     case CONCLUSION.employing:
       state.currentStage = INTRODUCTION.role;
       state.role = null;
-      // TODO: Print ID
-      console.log(`ID is ${state.currID}`);
+
+      printId(state.currID);
       logAlt(`ID is ${state.currID}`);
       break;
     default:

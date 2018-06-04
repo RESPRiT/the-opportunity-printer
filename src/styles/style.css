@@ -95,6 +95,50 @@ body {
     box-shadow: 0px 0px 5px lightblue;
 }
 
+.voicemail {
+    margin-bottom: 20px;
+}
+
+.receipt-container {
+    display: none;
+    padding: 20px;
+    font-family: 'Courier New', Courier, monospace;
+    text-align: center;
+    font-size: 10pt;
+}
+
+.receipt {
+    width: 3in;
+    background-color: white;
+    border: 1px solid black;
+    margin-left: auto;
+    margin-right: auto;
+    padding: 15px;
+    margin-bottom: 25px;
+}
+
+.print-matches {
+    display: none;
+}
+
+.print-id {
+    display: none;
+}
+
+h1 {
+    font-size: 12pt;
+    font-weight: bold;
+}
+
+h2 {
+    font-size: 11pt;
+    font-weight: bold;
+}
+
+#id-number {
+    font-weight: bold;
+}
+
 /*
 CRT effect from 
 http://aleclownes.com/2017/02/01/crt-display.html

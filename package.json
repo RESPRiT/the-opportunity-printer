@@ -1,0 +1,25 @@
+{
+  "name": "the-opportunity-printer",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "parcel src/index.html -p 8080",
+    "build": "parcel build src/index.html"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/christineta/the-opportunity-printer.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/christineta/the-opportunity-printer/issues"
+  },
+  "homepage": "https://github.com/christineta/the-opportunity-printer#readme",
+  "dependencies": {
+    "live-server": "^1.2.0",
+    "parcel-bundler": "^1.8.1",
+    "typed.js": "^2.0.7"
+  }
+}

@@ -96,6 +96,7 @@ let handleSeeking = (keyName) => {
       state.currentStage = INTRODUCTION.role;
       state.role = null;
       
+      // TODO do matching
       // generate random IDs for matches
       let matches = [];
       let i = 1;
@@ -117,8 +118,8 @@ let handleSeeking = (keyName) => {
       }
 
       console.log(retMatches);
-      // TODO: find and print matches
       if(retMatches.length > 0) {
+        printMatches(matches);
         logAlt(`Matches are ${retMatches.join(', ')}`);
       } else {
         logAlt('No matches :(');

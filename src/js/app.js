@@ -1,6 +1,14 @@
 import Typed from 'typed.js';
-import { ROLES, EMPLOYING_QUESTIONS, SEEKING_QUESTIONS, CHECKING, CONCLUSION,
-         INTEREST_QUESTIONS, PERSONALITY_QUESTIONS, INTRODUCTION } from './stages.js';
+import {
+  ROLES,
+  EMPLOYING_QUESTIONS,
+  SEEKING_QUESTIONS,
+  CHECKING,
+  CONCLUSION,
+  INTEREST_QUESTIONS,
+  PERSONALITY_QUESTIONS,
+  INTRODUCTION
+} from './stages.js';
 
 // constants
 const ACTIONS = {
@@ -24,6 +32,8 @@ const EL = {
   lights: document.querySelector('.lights'),
   recording: document.querySelector('.recording'),
   playing: document.querySelector('.playing'),
+  bar: document.querySelector('.bar'),
+  barBackground: document.querySelector('.bar-background')
 };
 
 // state
@@ -39,11 +49,14 @@ let state = {
   // mapping of seeker project ids -> inbox ids
   projectIDs: {},
 
+  // mapping of project ids -> phone numbers
+  phoneNumbers: {},
+
   // current ID being accessed/used
   currID: null,
 
-  // ID of next inbox to be created
-  nextID: 1
+  // for re-recording
+  tempAudio: null
 };
 
 // misc. init
@@ -59,20 +72,24 @@ let log = str => {
   if (type && type.strings[0] == str) return;
 
   if (type) {
-    console.log(type);
     type.destroy();
   }
 
-  type = new Typed(EL.out, { 
-    strings: [str], 
-    typeSpeed: 0,
+  type = new Typed(EL.out, {
+    strings: [str],
+    typeSpeed: 20,
     loop: false,
     showCursor: false
   });
 };
 
-let logAlt = str => EL.outAlt.textContent = str;
+let logAlt = str => {
+  if (!str) str = '';
+  EL.outAlt.textContent = str;
+};
 
+/*
+// button lights for progress
 let lights = count => {
   if(count == undefined) return;
   for (let i = 0; i < 5; i++) {
@@ -83,6 +100,15 @@ let lights = count => {
     }
     count--;
   } 
+};
+*/
+
+// progress bar
+let lights = count => {
+  let percentage = count / 5 * 100;
+  if (percentage < 1) percentage = 1;
+  EL.bar.style.width = percentage + '%';
+  EL.barBackground.style.width = 100 - percentage + '%';
 };
 
 let recordingLit = lit => {
@@ -99,7 +125,7 @@ let playingLit = lit => {
   } else {
     EL.playing.classList.remove('lit');
   }
-}
+};
 
 let makeAudio = src => {
   /*
@@ -120,139 +146,108 @@ let success = stream => {
   let mediaRecorder = new MediaRecorder(stream);
 
   // make inbox, returns true if the call stopped the recording
-  //EL.makeInbox.onclick = 
   audioFn.makeInbox = () => {
     switch (mediaRecorder.state) {
       case 'inactive':
         state.currAction = ACTIONS.makeInbox;
-        state.currID = state.nextID;
-        //EL.makeInbox.style.background = 'red';
+        //state.currID = state.nextID;
         beepEnded(() => {
           mediaRecorder.start();
           recordingLit(true);
         });
         beep.play();
 
-        //log(`Recording voicemail welcome for inbox #${state.currID}`);
-        //EL.leaveMessage.disabled = true;
-        //EL.checkInbox.disabled = true;
         return false;
       case 'recording':
-        //EL.makeInbox.style.background = '';
         mediaRecorder.stop();
         recordingLit(false);
 
-        //log(`Inbox #${state.currID} created!`);
-        //EL.leaveMessage.disabled = false;
-        //EL.checkInbox.disabled = false;
         return true;
     }
   };
 
   // check inbox
-  // EL.checkInbox.onclick = 
-  // TODO: Probably redundant code idk
   audioFn.checkInbox = (id, messageNum) => {
     state.currAction = ACTIONS.checkInbox;
     state.currID = id;
-    //state.currID = EL.id.value;
 
     if (state.currID in state.messages) {
       if (state.messages[state.currID].length > 0) {
-        //log(`Here are the messages left for inbox #${state.currID}`);
-        //EL.recordings.innerHTML = '';
-        //for (let src of state.messages[state.currID]) {
-          //let audio = makeAudio(src);
-          //EL.recordings.appendChild(audio);
-        //}
         return makeAudio(state.messages[state.currID][messageNum]);
-      } else {
-       //log(`Inbox #${state.currID} is empty`);
-      }
-    } else {
-      //log(`Inbox #${state.currID} does not exist`);
-    }
+      } else {}
+    } else {}
   };
 
   // leave message
-  //EL.leaveMessage.onclick = 
   audioFn.leaveMessage = (projectID) => {
     state.currID = state.projectIDs[projectID];
-    //state.currID = EL.id.value;
 
     if (state.currID in state.messages) {
       if (state.currAction != ACTIONS.leaveMessageListen &&
         state.currAction != ACTIONS.leaveMessageRecord) {
         state.currAction = ACTIONS.leaveMessageListen;
-        //log(`Here is the voicemail greeting for inbox #${state.currID}`);
-        return makeAudio(state.inboxes[state.currID]);
-        //EL.recordings.innerHTML = '';
-        //EL.recordings.appendChild(audio);
-        //EL.leaveMessage.style.background = 'green';
 
-        //EL.makeInbox.disabled = true;
-        //EL.checkInbox.disabled = true;
+        return makeAudio(state.inboxes[state.currID]);
       } else if (state.currAction == ACTIONS.leaveMessageListen) {
         state.currAction = ACTIONS.leaveMessageRecord;
-        //EL.leaveMessage.style.background = 'red';
-        beepEnded(() => mediaRecorder.start());
+        beepEnded(() => {
+          mediaRecorder.start();
+          recordingLit(true);
+        });
         beep.play();
 
-        //log(`Recording message for inbox #${state.currID}`);
-        //EL.recordings.innerHTML = '';
-        //EL.makeInbox.disabled = true;
-        //EL.checkInbox.disabled = true;
         return false;
       } else {
-        //EL.leaveMessage.style.background = '';
         mediaRecorder.stop();
         recordingLit(false);
 
-        //log(`Message left for inbox #${state.currID}`);
-        //EL.makeInbox.disabled = false;
-        //EL.checkInbox.disabled = false;
         return true;
       }
-    } else {
-      log(`Inbox #${state.currID} does not exist`);
     }
   };
 
   mediaRecorder.onstop = e => {
     // create audio blob and get URL reference
-    let blob = new Blob(chunks, { 'type': 'audio/ogg; codecs=opus' });
+    let blob = new Blob(chunks, {
+      'type': 'audio/ogg; codecs=opus'
+    });
     chunks = [];
     let audioSrc = window.URL.createObjectURL(blob);
 
     switch (state.currAction) {
       case ACTIONS.makeInbox:
-        state.inboxes[state.nextID] = audioSrc;
-        state.messages[state.nextID] = [];
-        state.nextID++;
+        //state.inboxes[state.nextID] = audioSrc;
+        //state.messages[state.nextID] = [];
+        //state.nextID++;
+        state.tempAudio = audioSrc;
         break;
       case ACTIONS.leaveMessageRecord:
         state.currAction = null;
-        if (state.currID in state.messages) {
-          state.messages[state.currID].push(audioSrc);
+        state.tempAudio = audioSrc;
+        /*
+        if (state.currI D in state.messages) {
+            state.messages[state.currID].push(audioSrc);
         } else {
-          console.log(`Inbox #${state.currID} does not exist`);
+            console.log(`Inbox #${state.currID} does not exist`);
         }
+        */
         break;
       default:
         console.log(`Something went wrong, action ${state.currAction} shouldn't happen here`);
         break;
     }
-  }
+  };
   mediaRecorder.ondataavailable = e => chunks.push(e.data);
 };
 
 // setup media devices
-navigator.mediaDevices.getUserMedia({ audio: true })
+navigator.mediaDevices.getUserMedia({
+    audio: true
+  })
   .then(success)
   .catch(err => {
     console.log(`The following getUserMedia error occured: ${err}`);
-  }
-  );
+  });
 
 /******************
  * Input handling *
@@ -262,31 +257,34 @@ navigator.mediaDevices.getUserMedia({ audio: true })
 state.role = null;
 state.currentStage = INTRODUCTION.role;
 state.responses = null;
+state.altOverride = false;
 
 // let log = str => document.querySelector('.out').textContent = str;
 
 let handleInput = (keyName) => {
+
   // ignore input if audio is playing
-  if(state.currAudio && !state.currAudio.ended) {
+  if (state.currAudio && !state.currAudio.ended) {
     return;
   }
 
   // determine if we should do anything
-  if(keyName != null && !keyName.match(state.currentStage.input)) {
+  if (keyName != null && !keyName.match(state.currentStage.input)) {
     console.log(`${keyName} does not match ${state.currentStage.input}`);
     return;
   } else {
     console.log(`Got ${keyName}`);
   }
 
+  state.altOverride = false;
   // check if there's currently a role in progress
-  if(state.role == null) {
+  if (state.role == null) {
     state.role = keyName;
     state.responses = {};
     logAlt('');
-    
+
     // update stage
-    switch(state.role) {
+    switch (state.role) {
       case ROLES.seeking:
         state.currentStage = INTRODUCTION.seeking;
         break;
@@ -299,7 +297,7 @@ let handleInput = (keyName) => {
     }
   } else {
     // do something based on current stage
-    switch(state.role) {
+    switch (state.role) {
       case ROLES.seeking:
         handleSeeking(keyName);
         break;
@@ -311,12 +309,14 @@ let handleInput = (keyName) => {
         break;
     }
   }
+
   log(state.currentStage.text);
+  if (!state.altOverride) logAlt(state.currentStage.subText);
   lights(state.currentStage.lights);
 };
 
 let handleSeeking = (keyName) => {
-  switch(state.currentStage) {
+  switch (state.currentStage) {
     case INTRODUCTION.seeking:
       state.currentStage = SEEKING_QUESTIONS.tech;
       break;
@@ -349,36 +349,59 @@ let handleSeeking = (keyName) => {
       state.responses['city'] = keyName;
       break;
     case PERSONALITY_QUESTIONS.animal:
-      state.currentStage = CONCLUSION.seeking;
+      state.currentStage = CHECKING.leavingMessagePhone;
       state.responses['animal'] = keyName;
+      break;
+    case CHECKING.leavingMessagePhone:
+      state.altOverride = true;
+      logAlt('');
+      if (keyName == '+') {
+        state.currentStage = CONCLUSION.seeking;
+      } else if (keyName == '-') {
+        if (state.responses['phone'].length > 0) {
+          state.responses['phone'] = state.responses['phone'].slice(0, -1);
+        }
+        logAlt(state.responses['phone']);
+      } else {
+        if (!state.responses['phone']) {
+          state.responses['phone'] = keyName;
+        } else {
+          state.responses['phone'] += keyName;
+        }
+        console.log(state.responses['phone']);
+        logAlt(state.responses['phone']);
+      }
       break;
     case CONCLUSION.seeking:
       state.currentStage = INTRODUCTION.role;
       state.role = null;
-      
+
       // generate random IDs for matches
       let matches = [];
-      let i = 1;
+      let i = 0;
       do {
         matches[i] = Math.floor(Math.random() * 1000) + 1;
         i++;
       } while (
         matches.reduce(
-          (prev, curr) => prev && !Object.keys(state.projectIDs).includes(curr)
-        ) && i <= 4
+          (prev, curr) => prev && !Object.keys(state.projectIDs).includes(curr) &&
+          !Object.keys(state.messages).includes(curr)
+
+        ) && i < 4
       );
 
+      // return as many IDs as there are available projects
       let retMatches = [];
-      for(i = 1; i <= matches.length; i++) {
-        if(state.inboxes[i]) {
-          state.projectIDs[matches[i]] = i;
-          retMatches[i - 1] = matches[i];
-        }
+      for (i = 0; i < matches.length && i < Object.keys(state.inboxes).length; i++) {
+        // TODO: actually have a matching algorithm
+        state.projectIDs[matches[i]] = Object.keys(state.inboxes)[i];
+        retMatches[i] = matches[i];
       }
 
       console.log(retMatches);
       // TODO: find and print matches
-      if(retMatches.length > 0) {
+      state.altOverride = true;
+      if (retMatches.length > 0) {
         logAlt(`Matches are ${retMatches.join(', ')}`);
       } else {
         logAlt('No matches :(');
@@ -391,7 +414,7 @@ let handleSeeking = (keyName) => {
 };
 
 let handleEmploying = (keyName) => {
-  switch(state.currentStage) {
+  switch (state.currentStage) {
     case INTRODUCTION.employing:
       state.currentStage = EMPLOYING_QUESTIONS.tech;
       break;
@@ -428,14 +451,37 @@ let handleEmploying = (keyName) => {
       state.responses['animal'] = keyName;
       break;
     case CHECKING.makeInbox:
-      if(audioFn.makeInbox()) {
+      if (audioFn.makeInbox()) {
+        state.currentStage = CHECKING.makeInboxConfirm; //CONCLUSION.employing;
+      }
+      break;
+    case CHECKING.makeInboxConfirm:
+      if (keyName == '+') {
+        // generate next ID
+        let id;
+        let i = 0;
+        do {
+          id = Math.floor(Math.random() * 1000) + 1;
+          console.log(id);
+          i++;
+        } while (
+          Object.keys(state.projectIDs).includes(id) &&
+          Object.keys(state.messages).includes(id) && i < 10
+        );
+        state.currID = id;
         state.currentStage = CONCLUSION.employing;
+        state.inboxes[state.currID] = state.tempAudio;
+        state.messages[state.currID] = [];
+        state.tempAudio = null;
+      } else {
+        state.currentStage = CHECKING.makeInbox;
       }
       break;
     case CONCLUSION.employing:
       state.currentStage = INTRODUCTION.role;
       state.role = null;
       // TODO: Print ID
+      state.altOverride = true;
       console.log(`ID is ${state.currID}`);
       logAlt(`ID is ${state.currID}`);
       break;
@@ -445,25 +491,27 @@ let handleEmploying = (keyName) => {
   }
 };
 
-let handleChecking  = (keyName) => {
-  switch(state.currentStage) {
+let handleChecking = (keyName) => {
+  switch (state.currentStage) {
     case INTRODUCTION.checking:
+      state.altOverride = true;
       logAlt('');
-      if(keyName == '+') {
-        if(Object.keys(state.projectIDs).includes(state.responses['id'])) {
+      if (keyName == '+') {
+        state.altOverride = false;
+        if (Object.keys(state.projectIDs).includes(state.responses['id'])) {
           state.currentStage = CHECKING.leavingMessageListen;
-        } else if(Object.keys(state.messages).includes(state.responses['id'])) {
+        } else if (Object.keys(state.messages).includes(state.responses['id'])) {
           state.currentStage = CHECKING.checkingVoicemail;
         } else {
           state.currentStage = CHECKING.notFound;
         }
-      } else if(keyName == '-') {
-        if(state.responses['id'].length > 0) {
+      } else if (keyName == '-') {
+        if (state.responses['id'].length > 0) {
           state.responses['id'] = state.responses['id'].slice(0, -1);
         }
         logAlt(state.responses['id']);
       } else {
-        if(!state.responses['id']) {
+        if (!state.responses['id']) {
           state.responses['id'] = keyName;
         } else {
           state.responses['id'] += keyName;
@@ -483,29 +531,28 @@ let handleChecking  = (keyName) => {
     case CHECKING.checkingVoicemail:
       // check if there are any messages
       let currMessages = state.messages[state.responses['id']];
-      if(currMessages.length == 0) {
+      if (currMessages.length == 0) {
         state.currentStage = CHECKING.noMessages;
         return;
       }
 
       // start incrementing through messages
-      if(state.responses['checked'] == undefined) {
+      if (state.responses['checked'] == undefined) {
         state.responses['checked'] = 0;
       } else {
         state.responses['checked']++;
       }
 
       // play message if there is a next message
-      if(currMessages.length > state.responses['checked']) {
-        state.currAudio = audioFn.checkInbox(state.responses['id'], 
-                                             state.responses['checked']);
+      if (currMessages.length > state.responses['checked']) {
+        state.currAudio = audioFn.checkInbox(state.responses['id'],
+          state.responses['checked']);
         state.currAudio.addEventListener('ended', () => {
           playingLit(false);
         });
 
         state.currAudio.play();
         playingLit(true);
-
       } else {
         state.currentStage = CONCLUSION.checking;
       }
@@ -513,6 +560,7 @@ let handleChecking  = (keyName) => {
     case CONCLUSION.checking:
       state.currentStage = INTRODUCTION.role;
       state.role = null;
+      state.altOverride = true;
       logAlt('Contact info/phone numbers coming soon!!');
       break;
     case CHECKING.leavingMessageListen:
@@ -526,34 +574,30 @@ let handleChecking  = (keyName) => {
       playingLit(true);
       break;
     case CHECKING.leavingMessageChoice:
-      if(keyName == '+') {
+      if (keyName == '+') {
         state.currentStage = CHECKING.leavingMessageRecord;
-      } else if(keyName == '0') {
+      } else if (keyName == '0') {
         state.currentStage = INTRODUCTION.role;
         state.role = null;
         state.currAction = null;
       }
       break;
     case CHECKING.leavingMessageRecord:
-      if(audioFn.leaveMessage(state.responses['id'])) {
-        state.currentStage = CHECKING.leavingMessagePhone;
+      if (audioFn.leaveMessage(state.responses['id'])) {
+        state.currentStage = CHECKING.leavingMessageConfirm; //CONCLUSION.leavingMessage;
       }
       break;
-    case CHECKING.leavingMessagePhone:
-      logAlt('');
-      if(keyName == '+') {
-        state.currentStage = CONCLUSION.leaveMessage;
+    case CHECKING.leavingMessageConfirm:
+      if (keyName == '+') {
+        state.currentStage = CONCLUSION.leavingMessage;
+        state.messages[state.currID].push(state.tempAudio);
+        state.tempAudio = null;
       } else {
-        if(!state.responses['phone']) {
-          state.responses['phone'] = keyName;
-        } else {
-          state.responses['phone'] += keyName;
-        }
-        console.log(state.responses['phone']);
-        logAlt(state.responses['phone']);
+        state.currAction = ACTIONS.leaveMessageListen;
+        state.currentStage = CHECKING.leavingMessageRecord;
       }
       break;
-    case CONCLUSION.leaveMessage:
+    case CONCLUSION.leavingMessage:
       state.currentStage = INTRODUCTION.role;
       state.role = null;
       break;
@@ -571,4 +615,5 @@ document.addEventListener('keypress', (event) => {
 
 // main
 log(state.currentStage.text);
-lights(0);
+lights(0.05);
+console.log(state);

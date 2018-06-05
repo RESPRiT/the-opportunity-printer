@@ -1,31 +1,31 @@
 @font-face {
-    font-family: "PT Mono";
-    src: url("../fonts/PT_Mono.ttf");
+  font-family: "PT Mono";
+  src: url("../fonts/PT_Mono.ttf");
 }
 
 body {
-    background-color: black;
-    font-family: "PT Mono";
-    font-size: large;
-    color: white;
+  background-color: black;
+  font-family: "PT Mono";
+  font-size: large;
+  color: white;
 }
 
 .container {
-    background-color: #111111;
-    padding: 25px;
-    margin-left: auto;
-    margin-right: auto;
-    margin-top: 50px;
-    max-width: 750px;
+  background-color: #111111;
+  padding: 25px;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 50px;
+  max-width: 750px;
 }
 
 .out {
-    /*text-align: justify;*/
-    height: 125px;
-    padding: 20px;
-    margin: 5px;
-    border-radius: 5px;
-    background: #000000;
+  /*text-align: justify;*/
+  height: 125px;
+  padding: 20px;
+  margin: 5px;
+  border-radius: 5px;
+  background: #000000;
 }
 
 .out-alt {
@@ -37,36 +37,52 @@ body {
 }
 
 .all-lights {
-    display: flex;
-    justify-content: center;
-    align-items: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 10px;
 }
 
 .lights {
-    display: flex;
-    justify-content: center;
+  display: flex;
+  justify-content: left;
+  width: 200px;
 }
 
 .light {
-    width: 20px;
-    height: 20px;
-    border-radius: 10px;
-    background-image: radial-gradient(lightgreen, green);
-    box-shadow: 0px 0px 5px limegreen;
-    margin: 10px;
-    opacity: 0.1;
-    transition-duration: .3s;
+  width: 20px;
+  height: 20px;
+  border-radius: 10px;
+  background-image: radial-gradient(lightgreen, green);
+  box-shadow: 0px 0px 5px limegreen;
+  margin: 10px;
+  opacity: 0.1;
+  transition-duration: .3s;
 }
 
 .lit {
-    opacity: 1;
+  opacity: 1;
+}
+
+.bar {
+  height: 20px;
+  background-color: rgb(2, 179, 2);
+  box-shadow: 0px 0px 5px limegreen;
+  transition-duration: 2s;
+  border-radius: 2.5px;
+}
+
+.bar-background {
+  height: 20px;
+  background-color: darkslategrey;
+  opacity: .25;
+  transition-duration: 2s;
 }
 
 @keyframes blink {
   from {
     opacity: 0.1;
-  } 
-  
+  }
   to {
     opacity: 1;
   }
@@ -80,69 +96,70 @@ body {
 }
 
 .recording {
-    width: 10px;
-    height: 10px;
-    border-radius: 5px;
-    background-image: radial-gradient(lightcoral, red);
-    box-shadow: 0px 0px 5px lightcoral;
+  width: 10px;
+  height: 10px;
+  border-radius: 5px;
+  background-image: radial-gradient(lightcoral, red);
+  box-shadow: 0px 0px 5px lightcoral;
 }
 
 .playing {
-    width: 10px;
-    height: 10px;
-    border-radius: 5px;
-    background-image: radial-gradient(lightblue, blue);
-    box-shadow: 0px 0px 5px lightblue;
+  width: 10px;
+  height: 10px;
+  border-radius: 5px;
+  background-image: radial-gradient(lightblue, blue);
+  box-shadow: 0px 0px 5px lightblue;
 }
 
 .voicemail {
-    margin-bottom: 20px;
+  margin-bottom: 20px;
 }
 
 .receipt-container {
-    display: none;
-    padding: 20px;
-    font-family: 'Courier New', Courier, monospace;
-    text-align: center;
-    font-size: 10pt;
+  display: none;
+  padding: 20px;
+  font-family: 'Courier New', Courier, monospace;
+  text-align: center;
+  font-size: 10pt;
 }
 
 .receipt {
-    width: 3in;
-    background-color: white;
-    border: 1px solid black;
-    margin-left: auto;
-    margin-right: auto;
-    padding: 15px;
-    margin-bottom: 25px;
+  width: 3in;
+  background-color: white;
+  border: 1px solid black;
+  margin-left: auto;
+  margin-right: auto;
+  padding: 15px;
+  margin-bottom: 25px;
 }
 
 .print-matches {
-    display: none;
+  display: none;
 }
 
 .print-id {
-    display: none;
+  display: none;
 }
 
 h1 {
-    font-size: 12pt;
-    font-weight: bold;
+  font-size: 12pt;
+  font-weight: bold;
 }
 
 h2 {
-    font-size: 11pt;
-    font-weight: bold;
+  font-size: 11pt;
+  font-weight: bold;
 }
 
 #id-number {
-    font-weight: bold;
+  font-weight: bold;
 }
 
 /*
 CRT effect from 
 http://aleclownes.com/2017/02/01/crt-display.html
 */
+
 @keyframes flicker {
   0% {
     opacity: 0.27861;
@@ -208,69 +225,70 @@ http://aleclownes.com/2017/02/01/crt-display.html
     opacity: 0.24387;
   }
 }
+
 @keyframes textShadow {
   0% {
-    text-shadow: 0.4389924193300864px 0 1px rgba(0,30,255,0.5), -0.4389924193300864px 0 1px rgba(255,0,80,0.3), 0 0 3px;
+    text-shadow: 0.4389924193300864px 0 1px rgba(0, 30, 255, 0.5), -0.4389924193300864px 0 1px rgba(255, 0, 80, 0.3), 0 0 3px;
   }
   5% {
-    text-shadow: 2.7928974010788217px 0 1px rgba(0,30,255,0.5), -2.7928974010788217px 0 1px rgba(255,0,80,0.3), 0 0 3px;
+    text-shadow: 2.7928974010788217px 0 1px rgba(0, 30, 255, 0.5), -2.7928974010788217px 0 1px rgba(255, 0, 80, 0.3), 0 0 3px;
   }
   10% {
-    text-shadow: 0.02956275843481219px 0 1px rgba(0,30,255,0.5), -0.02956275843481219px 0 1px rgba(255,0,80,0.3), 0 0 3px;
+    text-shadow: 0.02956275843481219px 0 1px rgba(0, 30, 255, 0.5), -0.02956275843481219px 0 1px rgba(255, 0, 80, 0.3), 0 0 3px;
   }
   15% {
-    text-shadow: 0.40218538552878136px 0 1px rgba(0,30,255,0.5), -0.40218538552878136px 0 1px rgba(255,0,80,0.3), 0 0 3px;
+    text-shadow: 0.40218538552878136px 0 1px rgba(0, 30, 255, 0.5), -0.40218538552878136px 0 1px rgba(255, 0, 80, 0.3), 0 0 3px;
   }
   20% {
-    text-shadow: 3.4794037899852017px 0 1px rgba(0,30,255,0.5), -3.4794037899852017px 0 1px rgba(255,0,80,0.3), 0 0 3px;
+    text-shadow: 3.4794037899852017px 0 1px rgba(0, 30, 255, 0.5), -3.4794037899852017px 0 1px rgba(255, 0, 80, 0.3), 0 0 3px;
   }
   25% {
-    text-shadow: 1.6125630401149584px 0 1px rgba(0,30,255,0.5), -1.6125630401149584px 0 1px rgba(255,0,80,0.3), 0 0 3px;
+    text-shadow: 1.6125630401149584px 0 1px rgba(0, 30, 255, 0.5), -1.6125630401149584px 0 1px rgba(255, 0, 80, 0.3), 0 0 3px;
   }
   30% {
-    text-shadow: 0.7015590085143956px 0 1px rgba(0,30,255,0.5), -0.7015590085143956px 0 1px rgba(255,0,80,0.3), 0 0 3px;
+    text-shadow: 0.7015590085143956px 0 1px rgba(0, 30, 255, 0.5), -0.7015590085143956px 0 1px rgba(255, 0, 80, 0.3), 0 0 3px;
   }
   35% {
-    text-shadow: 3.896914047650351px 0 1px rgba(0,30,255,0.5), -3.896914047650351px 0 1px rgba(255,0,80,0.3), 0 0 3px;
+    text-shadow: 3.896914047650351px 0 1px rgba(0, 30, 255, 0.5), -3.896914047650351px 0 1px rgba(255, 0, 80, 0.3), 0 0 3px;
   }
   40% {
-    text-shadow: 3.870905614848819px 0 1px rgba(0,30,255,0.5), -3.870905614848819px 0 1px rgba(255,0,80,0.3), 0 0 3px;
+    text-shadow: 3.870905614848819px 0 1px rgba(0, 30, 255, 0.5), -3.870905614848819px 0 1px rgba(255, 0, 80, 0.3), 0 0 3px;
   }
   45% {
-    text-shadow: 2.231056963361899px 0 1px rgba(0,30,255,0.5), -2.231056963361899px 0 1px rgba(255,0,80,0.3), 0 0 3px;
+    text-shadow: 2.231056963361899px 0 1px rgba(0, 30, 255, 0.5), -2.231056963361899px 0 1px rgba(255, 0, 80, 0.3), 0 0 3px;
   }
   50% {
-    text-shadow: 0.08084290417898504px 0 1px rgba(0,30,255,0.5), -0.08084290417898504px 0 1px rgba(255,0,80,0.3), 0 0 3px;
+    text-shadow: 0.08084290417898504px 0 1px rgba(0, 30, 255, 0.5), -0.08084290417898504px 0 1px rgba(255, 0, 80, 0.3), 0 0 3px;
   }
   55% {
-    text-shadow: 2.3758461067427543px 0 1px rgba(0,30,255,0.5), -2.3758461067427543px 0 1px rgba(255,0,80,0.3), 0 0 3px;
+    text-shadow: 2.3758461067427543px 0 1px rgba(0, 30, 255, 0.5), -2.3758461067427543px 0 1px rgba(255, 0, 80, 0.3), 0 0 3px;
   }
   60% {
-    text-shadow: 2.202193051050636px 0 1px rgba(0,30,255,0.5), -2.202193051050636px 0 1px rgba(255,0,80,0.3), 0 0 3px;
+    text-shadow: 2.202193051050636px 0 1px rgba(0, 30, 255, 0.5), -2.202193051050636px 0 1px rgba(255, 0, 80, 0.3), 0 0 3px;
   }
   65% {
-    text-shadow: 2.8638780614874975px 0 1px rgba(0,30,255,0.5), -2.8638780614874975px 0 1px rgba(255,0,80,0.3), 0 0 3px;
+    text-shadow: 2.8638780614874975px 0 1px rgba(0, 30, 255, 0.5), -2.8638780614874975px 0 1px rgba(255, 0, 80, 0.3), 0 0 3px;
   }
   70% {
-    text-shadow: 0.48874025155497314px 0 1px rgba(0,30,255,0.5), -0.48874025155497314px 0 1px rgba(255,0,80,0.3), 0 0 3px;
+    text-shadow: 0.48874025155497314px 0 1px rgba(0, 30, 255, 0.5), -0.48874025155497314px 0 1px rgba(255, 0, 80, 0.3), 0 0 3px;
   }
   75% {
-    text-shadow: 1.8948491305757957px 0 1px rgba(0,30,255,0.5), -1.8948491305757957px 0 1px rgba(255,0,80,0.3), 0 0 3px;
+    text-shadow: 1.8948491305757957px 0 1px rgba(0, 30, 255, 0.5), -1.8948491305757957px 0 1px rgba(255, 0, 80, 0.3), 0 0 3px;
   }
   80% {
-    text-shadow: 0.0833037308038857px 0 1px rgba(0,30,255,0.5), -0.0833037308038857px 0 1px rgba(255,0,80,0.3), 0 0 3px;
+    text-shadow: 0.0833037308038857px 0 1px rgba(0, 30, 255, 0.5), -0.0833037308038857px 0 1px rgba(255, 0, 80, 0.3), 0 0 3px;
   }
   85% {
-    text-shadow: 0.09769827255241735px 0 1px rgba(0,30,255,0.5), -0.09769827255241735px 0 1px rgba(255,0,80,0.3), 0 0 3px;
+    text-shadow: 0.09769827255241735px 0 1px rgba(0, 30, 255, 0.5), -0.09769827255241735px 0 1px rgba(255, 0, 80, 0.3), 0 0 3px;
   }
   90% {
-    text-shadow: 3.443339761481782px 0 1px rgba(0,30,255,0.5), -3.443339761481782px 0 1px rgba(255,0,80,0.3), 0 0 3px;
+    text-shadow: 3.443339761481782px 0 1px rgba(0, 30, 255, 0.5), -3.443339761481782px 0 1px rgba(255, 0, 80, 0.3), 0 0 3px;
   }
   95% {
-    text-shadow: 2.1841838852799786px 0 1px rgba(0,30,255,0.5), -2.1841838852799786px 0 1px rgba(255,0,80,0.3), 0 0 3px;
+    text-shadow: 2.1841838852799786px 0 1px rgba(0, 30, 255, 0.5), -2.1841838852799786px 0 1px rgba(255, 0, 80, 0.3), 0 0 3px;
   }
   100% {
-    text-shadow: 2.6208764473832513px 0 1px rgba(0,30,255,0.5), -2.6208764473832513px 0 1px rgba(255,0,80,0.3), 0 0 3px;
+    text-shadow: 2.6208764473832513px 0 1px rgba(0, 30, 255, 0.5), -2.6208764473832513px 0 1px rgba(255, 0, 80, 0.3), 0 0 3px;
   }
 }
 
@@ -288,6 +306,7 @@ http://aleclownes.com/2017/02/01/crt-display.html
   pointer-events: none;
   animation: flicker 0.15s infinite;
 }
+
 .crt::before {
   content: " ";
   display: block;

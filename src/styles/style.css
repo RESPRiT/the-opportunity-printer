@@ -6,22 +6,25 @@
 body {
   background-color: black;
   font-family: "PT Mono";
-  font-size: large;
+  font-size: 24pt;
   color: white;
 }
 
 .container {
   background-color: #111111;
   padding: 25px;
-  margin-left: auto;
+  margin-left: 0px;
   margin-right: auto;
   margin-top: 50px;
-  max-width: 750px;
+  width: 1210px;
 }
+.output {
+  margin-top:100px;
+  margin-bottom: 250px;}
 
 .out {
   /*text-align: justify;*/
-  height: 125px;
+  height: 225px;
   padding: 20px;
   margin: 5px;
   border-radius: 5px;
@@ -34,6 +37,7 @@ body {
   margin: 5px;
   border-radius: 5px;
   background: black;
+  font-size: 18pt;
 }
 
 .all-lights {
@@ -46,7 +50,7 @@ body {
 .lights {
   display: flex;
   justify-content: left;
-  width: 200px;
+  width: 1000px;
 }
 
 .light {

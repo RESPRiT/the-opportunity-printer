@@ -23,7 +23,7 @@ const EL = {
   /*
   makeInbox: document.querySelector('.make-inbox'),
   checkInbox: document.querySelector('.check-inbox'),
-  leaveMessage: document.querySelector('.leave-message'),
+  leaveMessage: document.querySelector('.leave-  message'),
   id: document.querySelector('.numpad'),
   recordings: document.querySelector('.recordings'),
   */
@@ -303,6 +303,8 @@ let handleInput = (keyName) => {
 let handleSeeking = (keyName) => {
   switch (state.currentStage) {
     case INTRODUCTION.seeking:
+      window.print();
+      console.log('done');
       state.currentStage = SEEKING_QUESTIONS.tech;
       break;
     case SEEKING_QUESTIONS.tech:

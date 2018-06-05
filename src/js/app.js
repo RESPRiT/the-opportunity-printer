@@ -43,7 +43,8 @@ let state = {
   // mapping of id -> inbox welcome audio URL
   inboxes: {},
 
-  // mapping of id -> arr of inbox messages URLs
+  // mapping of id -> arr of inbox messages URLs and numbers
+  // {id: int, url: str}
   messages: {},
 
   // mapping of seeker project ids -> inbox ids
@@ -171,38 +172,32 @@ let success = stream => {
     state.currAction = ACTIONS.checkInbox;
     state.currID = id;
 
-    if (state.currID in state.messages) {
-      if (state.messages[state.currID].length > 0) {
-        return makeAudio(state.messages[state.currID][messageNum]);
-      } else {}
-    } else {}
+    return makeAudio(state.messages[state.currID][messageNum]['url']);
   };
 
   // leave message
   audioFn.leaveMessage = (projectID) => {
-    state.currID = state.projectIDs[projectID];
+    //state.currID = state.projectIDs[projectID];
 
-    if (state.currID in state.messages) {
-      if (state.currAction != ACTIONS.leaveMessageListen &&
-        state.currAction != ACTIONS.leaveMessageRecord) {
-        state.currAction = ACTIONS.leaveMessageListen;
+    if (state.currAction != ACTIONS.leaveMessageListen &&
+      state.currAction != ACTIONS.leaveMessageRecord) {
+      state.currAction = ACTIONS.leaveMessageListen;
 
-        return makeAudio(state.inboxes[state.currID]);
-      } else if (state.currAction == ACTIONS.leaveMessageListen) {
-        state.currAction = ACTIONS.leaveMessageRecord;
-        beepEnded(() => {
-          mediaRecorder.start();
-          recordingLit(true);
-        });
-        beep.play();
+      return makeAudio(state.inboxes[state.projectIDs[projectID]]);
+    } else if (state.currAction == ACTIONS.leaveMessageListen) {
+      state.currAction = ACTIONS.leaveMessageRecord;
+      beepEnded(() => {
+        mediaRecorder.start();
+        recordingLit(true);
+      });
+      beep.play();
 
-        return false;
-      } else {
-        mediaRecorder.stop();
-        recordingLit(false);
+      return false;
+    } else {
+      mediaRecorder.stop();
+      recordingLit(false);
 
-        return true;
-      }
+      return true;
     }
   };
 
@@ -216,21 +211,11 @@ let success = stream => {
 
     switch (state.currAction) {
       case ACTIONS.makeInbox:
-        //state.inboxes[state.nextID] = audioSrc;
-        //state.messages[state.nextID] = [];
-        //state.nextID++;
         state.tempAudio = audioSrc;
         break;
       case ACTIONS.leaveMessageRecord:
         state.currAction = null;
         state.tempAudio = audioSrc;
-        /*
-        if (state.currI D in state.messages) {
-            state.messages[state.currID].push(audioSrc);
-        } else {
-            console.log(`Inbox #${state.currID} does not exist`);
-        }
-        */
         break;
       default:
         console.log(`Something went wrong, action ${state.currAction} shouldn't happen here`);
@@ -384,9 +369,8 @@ let handleSeeking = (keyName) => {
         i++;
       } while (
         matches.reduce(
-          (prev, curr) => prev && !Object.keys(state.projectIDs).includes(curr) &&
-          !Object.keys(state.messages).includes(curr)
-
+          (prev, curr) => prev && Object.keys(state.projectIDs).includes(curr) &&
+          Object.keys(state.messages).includes(curr)
         ) && i < 4
       );
 
@@ -396,6 +380,9 @@ let handleSeeking = (keyName) => {
         // TODO: actually have a matching algorithm
         state.projectIDs[matches[i]] = Object.keys(state.inboxes)[i];
         retMatches[i] = matches[i];
+
+        // associate phone with ID
+        state.phoneNumbers[matches[i]] = state.responses['phone'];
       }
 
       console.log(retMatches);
@@ -590,7 +577,11 @@ let handleChecking = (keyName) => {
     case CHECKING.leavingMessageConfirm:
       if (keyName == '+') {
         state.currentStage = CONCLUSION.leavingMessage;
-        state.messages[state.currID].push(state.tempAudio);
+        let message = {
+          url: state.tempAudio,
+          id: state.phoneNumbers[state.responses['id']]
+        };
+        state.messages[state.currID].push(message);
         state.tempAudio = null;
       } else {
         state.currAction = ACTIONS.leaveMessageListen;

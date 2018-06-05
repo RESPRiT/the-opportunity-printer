@@ -100,17 +100,17 @@ body {
 }
 
 .recording {
-  width: 10px;
+  /*width: 10px;
   height: 10px;
-  border-radius: 5px;
+  border-radius: 5px;*/
   background-image: radial-gradient(lightcoral, red);
   box-shadow: 0px 0px 5px lightcoral;
 }
 
 .playing {
-  width: 10px;
+  /*width: 10px;
   height: 10px;
-  border-radius: 5px;
+  border-radius: 5px;*/
   background-image: radial-gradient(lightblue, blue);
   box-shadow: 0px 0px 5px lightblue;
 }

@@ -114,7 +114,7 @@ export const INTRODUCTION = {
 
 export const CHECKING = {
     makeInbox: {
-        text: 'Press Enter to record your project description after the beep, press Enter again to finish your recording',
+        text: 'Please pick up the phone to record! Press Enter to record your project description after the beep, press Enter again to finish your recording',
         input: /Enter/,
         lights: 3.5,
         store: false
@@ -145,7 +145,7 @@ export const CHECKING = {
         store: false
     },
     leavingMessageRecord: {
-        text: 'Press + to begin recording your message after the beep, press Enter again to finish recording',
+        text: 'Please pick up the phone to record! Press + to begin recording your message after the beep, press Enter again to finish recording',
         lights: 0,
         input: /Enter/,
         store: false

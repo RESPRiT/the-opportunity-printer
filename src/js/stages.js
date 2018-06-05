@@ -145,7 +145,7 @@ export const CHECKING = {
         store: false
     },
     leavingMessageRecord: {
-        text: 'Please pick up the phone to record! Press + to begin recording your message after the beep, press Enter again to finish recording',
+        text: 'Please pick up the phone to record! Press Enter to begin recording your message after the beep, press Enter again to finish recording',
         lights: 0,
         input: /Enter/,
         store: false

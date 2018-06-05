@@ -376,9 +376,26 @@ let handleSeeking = (keyName) => {
 
       // return as many IDs as there are available projects
       let retMatches = [];
-      for (i = 0; i < matches.length && i < Object.keys(state.inboxes).length; i++) {
+      let projectsOptions = Object.keys(state.inboxes);
+
+      let counter = projectsOptions.length;
+      // While there are elements in the array
+      while (counter > 0) {
+          // Pick a random index
+          let index = Math.floor(Math.random() * counter);
+  
+          // Decrease counter by 1
+          counter--;
+  
+          // And swap the last element with it
+          let temp = projectsOptions[counter];
+          projectsOptions[counter] = projectsOptions[index];
+          projectsOptions[index] = temp;
+      }
+  
+      for (i = 0; i < matches.length && i < projectsOptions.length; i++) {
         // TODO: actually have a matching algorithm
-        state.projectIDs[matches[i]] = Object.keys(state.inboxes)[i];
+        state.projectIDs[matches[i]] = projectsOptions[i];
         retMatches[i] = matches[i];
 
         // associate phone with ID

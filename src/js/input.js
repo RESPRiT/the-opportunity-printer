@@ -180,6 +180,7 @@ let handleEmploying = (keyName) => {
         state.currentStage = INTRODUCTION.role;
         state.role = null;
         // TODO: Print ID
+        printId(state.currID);
         console.log(`ID is ${state.currID}`);
         logAlt(`ID is ${state.currID}`);
         break;

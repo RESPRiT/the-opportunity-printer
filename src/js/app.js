@@ -340,7 +340,7 @@ let handleSeeking = (keyName) => {
     case CHECKING.leavingMessagePhone:
       state.altOverride = true;
       logAlt('');
-      if (keyName == '+') {
+      if (keyName == 'Enter') {
         state.currentStage = CONCLUSION.seeking;
       } else if (keyName == '-') {
         if (state.responses['phone'].length > 0) {
@@ -389,7 +389,7 @@ let handleSeeking = (keyName) => {
       // TODO: find and print matches
       state.altOverride = true;
       if (retMatches.length > 0) {
-        logAlt(`Matches are ${retMatches.join(', ')}`);
+        logAlt(`Your matches are ${retMatches.join(', ')}`);
       } else {
         logAlt('No matches :(');
       }
@@ -443,7 +443,7 @@ let handleEmploying = (keyName) => {
       }
       break;
     case CHECKING.makeInboxConfirm:
-      if (keyName == '+') {
+      if (keyName == 'Enter') {
         // generate next ID
         let id;
         let i = 0;
@@ -470,7 +470,7 @@ let handleEmploying = (keyName) => {
       // TODO: Print ID
       state.altOverride = true;
       console.log(`ID is ${state.currID}`);
-      logAlt(`ID is ${state.currID}`);
+      logAlt(`Your ID number is ${state.currID}`);
       break;
     default:
       console.log('Can\'t handle for state');
@@ -483,7 +483,7 @@ let handleChecking = (keyName) => {
     case INTRODUCTION.checking:
       state.altOverride = true;
       logAlt('');
-      if (keyName == '+') {
+      if (keyName == 'Enter') {
         state.altOverride = false;
         if (Object.keys(state.projectIDs).includes(state.responses['id'])) {
           state.currentStage = CHECKING.leavingMessageListen;
@@ -548,7 +548,16 @@ let handleChecking = (keyName) => {
       state.currentStage = INTRODUCTION.role;
       state.role = null;
       state.altOverride = true;
-      logAlt('Contact info/phone numbers coming soon!!');
+      console.log(state.currID);
+      let phones = [];
+      for(let obj of state.messages[state.currID]) {
+        if(obj['id'] && obj['id'].length > 0) {
+          phones.push(obj['id']);
+        } else {
+          phones.push('N/A');
+        }
+      }
+      logAlt('Match contact information: ' + phones.join(', '));
       break;
     case CHECKING.leavingMessageListen:
       state.currAudio = audioFn.leaveMessage(state.responses['id']);
@@ -561,7 +570,7 @@ let handleChecking = (keyName) => {
       playingLit(true);
       break;
     case CHECKING.leavingMessageChoice:
-      if (keyName == '+') {
+      if (keyName == 'Enter') {
         state.currentStage = CHECKING.leavingMessageRecord;
       } else if (keyName == '0') {
         state.currentStage = INTRODUCTION.role;
@@ -575,7 +584,7 @@ let handleChecking = (keyName) => {
       }
       break;
     case CHECKING.leavingMessageConfirm:
-      if (keyName == '+') {
+      if (keyName == 'Enter') {
         state.currentStage = CONCLUSION.leavingMessage;
         let message = {
           url: state.tempAudio,

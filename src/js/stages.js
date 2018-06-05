@@ -1,7 +1,7 @@
 export const ROLES = {
     seeking: '2',
     employing: '1',
-    checking: '#'
+    checking: '+'
 };
 
 export const EMPLOYING_QUESTIONS = {
@@ -84,7 +84,7 @@ export const PERSONALITY_QUESTIONS = {
 
 export const INTRODUCTION = {
     role: {
-        text: 'Welcome to the Collaboration Station, press 1, 2, or type # followed by an ID to check messages or to leave a message',
+        text: 'Welcome to the Collaboration Station, press 1, 2, or type + followed by an ID to check messages or to leave a message',
         // determine exceptable input from ROLES keys
         input: new RegExp(`[${Object.values(ROLES).join('')}]`),
         lights: 0,
@@ -92,21 +92,21 @@ export const INTRODUCTION = {
     },
     employing: {
         text: 'Let’s add your project and find the right people to work with you!',
-        subText: '(Press + to continue)',
-        input: /\+/,
+        subText: '(Press Enter to continue)',
+        input: /Enter/,
         lights: 0,
         store: false
     },
     seeking: {
         text: 'Let’s find a project for you! First, please answer a few quick questions to help us find the best matches for you.',
-        subText: '(Press + to continue)',
-        input: /\+/,
+        subText: '(Press Enter to continue)',
+        input: /Enter/,
         lights: 0,
         store: false
     },
     checking: {
-        text: 'Please input your ID number and press + to continue!',
-        input: /[0-9\+\-]/,
+        text: 'Please input your ID number and press Enter to continue! You can backspace with "-"!',
+        input: /[0-9(Enter)\-]/,
         lights: 0,
         store: true
     }
@@ -114,66 +114,66 @@ export const INTRODUCTION = {
 
 export const CHECKING = {
     makeInbox: {
-        text: 'Press + to record your project description after the beep, press + again to finish your recording',
-        input: /[\+]/,
+        text: 'Press Enter to record your project description after the beep, press Enter again to finish your recording',
+        input: /Enter/,
         lights: 3.5,
         store: false
     },
     makeInboxConfirm: {
-        text: 'If you are happy with your project description, press + to confirm your recording, if not, press 0 to record again',
-        input: /[\+0]/,
+        text: 'If you are happy with your project description, press Enter to confirm your recording, if not, press 0 to record again',
+        input: /[(Enter)0]/,
         lights: 4,
         store: false
     },
     checkingVoicemail: {
         text: 'Checking voicemail',
-        subText: '(Press + to progress through messages)',
-        input: /\+/,
+        subText: '(Press Enter to progress through messages)',
+        input: /Enter/,
         lights: 0,
         store: false
     },
     leavingMessageListen: {
-        text: 'Press + to begin playing project description',
+        text: 'Press Enter to begin playing project description',
         lights: 0,
-        input: /\+/,
+        input: /Enter/,
         store: false
     },
     leavingMessageChoice: {
-        text: 'Are you interested in this project? If so, press + to leave a message and phone number, if not, press 0 to return to the main screen',
+        text: 'Are you interested in this project? If so, press Enter to leave a message and phone number, if not, press 0 to return to the main screen',
         lights: 0,
-        input: /[\+0]/,
+        input: /[(Enter)0]/,
         store: false
     },
     leavingMessageRecord: {
-        text: 'Press + to begin recording your message after the beep, press + again to finish recording',
+        text: 'Press + to begin recording your message after the beep, press Enter again to finish recording',
         lights: 0,
-        input: /\+/,
+        input: /Enter/,
         store: false
     },
     leavingMessageConfirm: {
-        text: 'If you are happy with your message, press + to confirm your recording, if not, press 0 to record again',
-        input: /[\+0]/,
+        text: 'If you are happy with your message, press Enter to confirm your recording, if not, press 0 to record again',
+        input: /[(Enter)0]/,
         lights: 0,
         store: false
     },
     leavingMessagePhone: {
-        text: 'Type in your phone number if you would like to provide contact information and press + when you are done, or press + to finish',
+        text: 'Type in your phone number if you would like to provide contact information and press Enter when you are done, or press Enter to finish. You can press "-" to backspace!',
         lights: 4,
-        input: /[0-9\+\-]/,
+        input: /[0-9(Enter)\-]/,
         store: false
     },
     notFound: {
         text: 'Nothing with that ID was found',
-        subText: '(Press + to return to the main screen)',
+        subText: '(Press Enter to return to the main screen)',
         lights: 0,
-        input: /\+/,
+        input: /Enter/,
         store: false
     },
     noMessages: {
         text: 'No messages have been left for your project yet',
-        subText: '(Press + to return to the main screen)',
+        subText: '(Press Enter to return to the main screen)',
         lights: 0,
-        input: /\+/,
+        input: /Enter/,
         store: false
     }
 };
@@ -181,26 +181,26 @@ export const CHECKING = {
 export const CONCLUSION = {
     seeking: {
         text: 'Please pull the lever to receive your matches!',
-        input: /\+/,
+        input: /p/,
         lights: 5,
         store: false
     },
     employing: {
         text: 'Please pull the lever to receive your ID!',
-        input: /\+/,
+        input: /p/,
         lights: 5,
         store: false
     },
     checking: {
         text: 'Please pull the lever to receive contact information for those who left you messages!',
-        input: /\+/,
+        input: /p/,
         lights: 5,
         store: false
     },
     leavingMessage: {
         text: 'Message and contact info received!',
-        subText: '(Press + to return to the main screen)',
-        input: /\+/,
+        subText: '(Press Enter to return to the main screen)',
+        input: /Enter/,
         lights: 5,
         store: false
     }

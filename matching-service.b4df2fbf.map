@@ -1,0 +1,1 @@
+{"version":3,"sources":["js/services/matching-service.js"],"names":["getMatches","projectSeeker"],"mappings":";AAAA,CAAC,YAAW;;AAER,aAASA,UAAT,CAAoBC,aAApB,EAAmC,CAAG;AAEzC,CAJD","file":"matching-service.b4df2fbf.map","sourceRoot":"../src","sourcesContent":["(function() {\n\n    function getMatches(projectSeeker) { }\n\n})();"]}
